@@ -1,0 +1,497 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BizBox Widoczność online</title>
+<meta name="description" content="Strona z formularzem, kalendarz rezerwacji i uporządkowana wizytówka Google dla firm usługowych. Bezpłatna rozmowa.">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#F59E0B}a:hover{color:#FBBF24}
+input,select{font-family:inherit}
+@keyframes up{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+@keyframes inR{from{opacity:0;transform:translateX(32px)}to{opacity:1;transform:none}}
+@keyframes float{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-30px,24px) scale(1.08)}}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(245,158,11,.55)}70%{box-shadow:0 0 0 14px rgba(245,158,11,0)}100%{box-shadow:0 0 0 0 rgba(245,158,11,0)}}
+@keyframes shine{0%{background-position:-200% 0}100%{background-position:200% 0}}
+.hi{animation:up .8s cubic-bezier(.2,.7,.2,1) backwards}
+.hi1{animation-delay:.05s}.hi2{animation-delay:.18s}.hi3{animation-delay:.32s}.hi4{animation-delay:.46s}.hi5{animation-delay:.6s}
+.hr{animation:inR .9s cubic-bezier(.2,.7,.2,1) backwards}
+.hr1{animation-delay:.3s}.hr2{animation-delay:.5s}.hr3{animation-delay:.7s}
+.glow{animation:float 14s ease-in-out infinite;pointer-events:none}
+.gold-t{background:linear-gradient(100deg,#F59E0B 20%,#FDE68A 45%,#F59E0B 70%);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:shine 6s linear infinite}
+.card{transition:transform .25s ease,border-color .25s ease,box-shadow .25s ease}
+.card:hover{transform:translateY(-6px);border-color:#F59E0B !important;box-shadow:0 14px 36px rgba(245,158,11,.12)}
+.btn{transition:transform .2s ease,box-shadow .2s ease,background .2s ease}
+.btn:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(245,158,11,.35);color:#0A0A0A}
+.btn:active{transform:translateY(0)}
+.ghost{transition:border-color .2s ease,background .2s ease,color .2s ease}
+.ghost:hover{border-color:#F59E0B !important;background:#1A1A1A;color:#FFFFFF}
+.live{animation:pulse 2.4s infinite}
+input:focus,select:focus{outline:none;border-color:#F59E0B !important;box-shadow:0 0 0 3px rgba(245,158,11,.2)}
+html{scroll-behavior:smooth}
+.faq{background:#121212;border:1px solid #262626;border-radius:16px;transition:border-color .25s ease,box-shadow .25s ease,background .25s ease}
+.faq:hover{border-color:#3a3a3a}
+.faq[open]{border-color:#F59E0B;background:linear-gradient(180deg,rgba(245,158,11,.09),#121212 70%);box-shadow:0 10px 32px rgba(245,158,11,.10)}
+.faq summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:20px 24px;font-size:18px;font-weight:800;line-height:1.35;border-radius:16px}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary:focus-visible{outline:2px solid #F59E0B;outline-offset:2px}
+.faq .pm{flex:0 0 auto;position:relative;width:32px;height:32px;border-radius:50%;background:#1A1A1A;border:1px solid #262626;transition:transform .3s ease,background .25s ease,border-color .25s ease}
+.faq .pm::before,.faq .pm::after{content:"";position:absolute;left:50%;top:50%;width:12px;height:2px;margin:-1px 0 0 -6px;background:#F59E0B;border-radius:2px;transition:transform .3s ease}
+.faq .pm::after{transform:rotate(90deg)}
+.faq[open] .pm{background:#F59E0B;border-color:#F59E0B;transform:rotate(180deg)}
+.faq[open] .pm::before,.faq[open] .pm::after{background:#0A0A0A}
+.faq[open] .pm::after{transform:rotate(0)}
+.faq .ans{padding:0 24px 22px}
+.faq .ans p{margin:0;font-size:16px;line-height:1.65;color:#B8B8B8}
+.faq[open] .ans{animation:up .35s ease}
+@media (max-width:600px){.faq summary{padding:16px 18px;font-size:16px}.faq .ans{padding:0 18px 18px}}
+
+.modal{position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.72);backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:16px;box-sizing:border-box}
+.modal.open{display:flex !important;animation:fade .25s ease}
+.mbox{position:relative;width:100%;max-width:820px;max-height:calc(100vh - 32px);overflow-y:auto;background:#121212;border:1px solid #262626;border-radius:20px;box-shadow:0 24px 80px rgba(0,0,0,.7);animation:pop .3s cubic-bezier(.2,.7,.2,1)}
+.mbox .wrap{padding-top:36px !important;padding-bottom:36px !important}
+.mclose{position:sticky;top:12px;float:right;margin:12px 12px 0 0;z-index:2;background:#1A1A1A;color:#fff;border:1px solid #262626;border-radius:10px;padding:8px 14px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer}
+.mclose:hover{border-color:#F59E0B}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+@keyframes pop{from{opacity:0;transform:translateY(20px) scale(.98)}to{opacity:1;transform:none}}
+
+img,svg{max-width:100%}
+html,body{overflow-x:hidden}
+@media (max-width:900px){
+.wrap{padding-left:20px !important;padding-right:20px !important;gap:32px !important}
+.h1{font-size:44px !important}
+.h2{font-size:32px !important}
+}
+@media (max-width:600px){
+.wrap{padding-left:16px !important;padding-right:16px !important}
+.h1{font-size:34px !important;line-height:1.1 !important}
+.h2{font-size:27px !important}
+.off{margin-left:0 !important}
+.fcard{padding:22px !important;flex-basis:100% !important}
+.wrap [style*="padding: 72px 24px"],.wrap[style*="padding: 72px 24px"]{padding-top:48px !important;padding-bottom:48px !important}
+.wrap[style*="padding: 80px 24px"]{padding-top:52px !important;padding-bottom:52px !important}
+.wrap[style*="padding: 72px 24px 88px"]{padding-top:44px !important;padding-bottom:56px !important}
+.wrap > a,.btn,.ghost{box-sizing:border-box}
+.hi4 a{flex:1 1 100%;text-align:center}
+.card{padding:22px !important}
+}
+@media (max-width:400px){.h1{font-size:30px !important}}
+
+@supports (animation-timeline:view()){
+.rv{animation:up linear both;animation-timeline:view();animation-range:entry 0% entry 45%}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none !important;transition:none !important}.hi,.hr{opacity:1}}
+</style>
+
+</head>
+<body>
+
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&amp;display=swap">
+<style>
+body{margin:0}
+a{color:#F59E0B}a:hover{color:#FBBF24}
+input,select{font-family:inherit}
+@keyframes up{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
+@keyframes inR{from{opacity:0;transform:translateX(32px)}to{opacity:1;transform:none}}
+@keyframes float{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-30px,24px) scale(1.08)}}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(245,158,11,.55)}70%{box-shadow:0 0 0 14px rgba(245,158,11,0)}100%{box-shadow:0 0 0 0 rgba(245,158,11,0)}}
+@keyframes shine{0%{background-position:-200% 0}100%{background-position:200% 0}}
+.hi{animation:up .8s cubic-bezier(.2,.7,.2,1) backwards}
+.hi1{animation-delay:.05s}.hi2{animation-delay:.18s}.hi3{animation-delay:.32s}.hi4{animation-delay:.46s}.hi5{animation-delay:.6s}
+.hr{animation:inR .9s cubic-bezier(.2,.7,.2,1) backwards}
+.hr1{animation-delay:.3s}.hr2{animation-delay:.5s}.hr3{animation-delay:.7s}
+.glow{animation:float 14s ease-in-out infinite;pointer-events:none}
+.gold-t{background:linear-gradient(100deg,#F59E0B 20%,#FDE68A 45%,#F59E0B 70%);background-size:200% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;animation:shine 6s linear infinite}
+.card{transition:transform .25s ease,border-color .25s ease,box-shadow .25s ease}
+.card:hover{transform:translateY(-6px);border-color:#F59E0B !important;box-shadow:0 14px 36px rgba(245,158,11,.12)}
+.btn{transition:transform .2s ease,box-shadow .2s ease,background .2s ease}
+.btn:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(245,158,11,.35);color:#0A0A0A}
+.btn:active{transform:translateY(0)}
+.ghost{transition:border-color .2s ease,background .2s ease,color .2s ease}
+.ghost:hover{border-color:#F59E0B !important;background:#1A1A1A;color:#FFFFFF}
+.live{animation:pulse 2.4s infinite}
+input:focus,select:focus{outline:none;border-color:#F59E0B !important;box-shadow:0 0 0 3px rgba(245,158,11,.2)}
+html{scroll-behavior:smooth}
+.faq{background:#121212;border:1px solid #262626;border-radius:16px;transition:border-color .25s ease,box-shadow .25s ease,background .25s ease}
+.faq:hover{border-color:#3a3a3a}
+.faq[open]{border-color:#F59E0B;background:linear-gradient(180deg,rgba(245,158,11,.09),#121212 70%);box-shadow:0 10px 32px rgba(245,158,11,.10)}
+.faq summary{list-style:none;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:20px 24px;font-size:18px;font-weight:800;line-height:1.35;border-radius:16px}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary:focus-visible{outline:2px solid #F59E0B;outline-offset:2px}
+.faq .pm{flex:0 0 auto;position:relative;width:32px;height:32px;border-radius:50%;background:#1A1A1A;border:1px solid #262626;transition:transform .3s ease,background .25s ease,border-color .25s ease}
+.faq .pm::before,.faq .pm::after{content:"";position:absolute;left:50%;top:50%;width:12px;height:2px;margin:-1px 0 0 -6px;background:#F59E0B;border-radius:2px;transition:transform .3s ease}
+.faq .pm::after{transform:rotate(90deg)}
+.faq[open] .pm{background:#F59E0B;border-color:#F59E0B;transform:rotate(180deg)}
+.faq[open] .pm::before,.faq[open] .pm::after{background:#0A0A0A}
+.faq[open] .pm::after{transform:rotate(0)}
+.faq .ans{padding:0 24px 22px}
+.faq .ans p{margin:0;font-size:16px;line-height:1.65;color:#B8B8B8}
+.faq[open] .ans{animation:up .35s ease}
+@media (max-width:600px){.faq summary{padding:16px 18px;font-size:16px}.faq .ans{padding:0 18px 18px}}
+
+.modal{position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.72);backdrop-filter:blur(4px);align-items:center;justify-content:center;padding:16px;box-sizing:border-box}
+.modal.open{display:flex !important;animation:fade .25s ease}
+.mbox{position:relative;width:100%;max-width:820px;max-height:calc(100vh - 32px);overflow-y:auto;background:#121212;border:1px solid #262626;border-radius:20px;box-shadow:0 24px 80px rgba(0,0,0,.7);animation:pop .3s cubic-bezier(.2,.7,.2,1)}
+.mbox .wrap{padding-top:36px !important;padding-bottom:36px !important}
+.mclose{position:sticky;top:12px;float:right;margin:12px 12px 0 0;z-index:2;background:#1A1A1A;color:#fff;border:1px solid #262626;border-radius:10px;padding:8px 14px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer}
+.mclose:hover{border-color:#F59E0B}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+@keyframes pop{from{opacity:0;transform:translateY(20px) scale(.98)}to{opacity:1;transform:none}}
+
+img,svg{max-width:100%}
+html,body{overflow-x:hidden}
+@media (max-width:900px){
+.wrap{padding-left:20px !important;padding-right:20px !important;gap:32px !important}
+.h1{font-size:44px !important}
+.h2{font-size:32px !important}
+}
+@media (max-width:600px){
+.wrap{padding-left:16px !important;padding-right:16px !important}
+.h1{font-size:34px !important;line-height:1.1 !important}
+.h2{font-size:27px !important}
+.off{margin-left:0 !important}
+.fcard{padding:22px !important;flex-basis:100% !important}
+.wrap [style*="padding: 72px 24px"],.wrap[style*="padding: 72px 24px"]{padding-top:48px !important;padding-bottom:48px !important}
+.wrap[style*="padding: 80px 24px"]{padding-top:52px !important;padding-bottom:52px !important}
+.wrap[style*="padding: 72px 24px 88px"]{padding-top:44px !important;padding-bottom:56px !important}
+.wrap > a,.btn,.ghost{box-sizing:border-box}
+.hi4 a{flex:1 1 100%;text-align:center}
+.card{padding:22px !important}
+}
+@media (max-width:400px){.h1{font-size:30px !important}}
+
+@supports (animation-timeline:view()){
+.rv{animation:up linear both;animation-timeline:view();animation-range:entry 0% entry 45%}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none !important;transition:none !important}.hi,.hr{opacity:1}}
+</style>
+</helmet>
+<div style="width: 100%; background: #0A0A0A; color: #FFFFFF; font-family: 'Manrope', system-ui, sans-serif; display: flex; flex-direction: column; overflow: hidden">
+
+  <!-- HEADER -->
+  <div style="width: 100%; box-sizing: border-box; border-bottom: 1px solid #262626; position: relative; z-index: 5">
+    <div class="wrap" style="max-width: 1120px; margin: 0 auto; box-sizing: border-box; padding: 20px 24px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px">
+      <div style="font-size: 24px; font-weight: 800; letter-spacing: -0.02em">Biz<span style="color: #F59E0B">Box</span></div>
+      <a class="btn" href="#formularz" style="display: inline-block; background: #F59E0B; color: #0A0A0A; text-decoration: none; font-weight: 800; font-size: 15px; padding: 12px 20px; border-radius: 12px">Umów bezpłatną rozmowę</a>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <div style="width: 100%; box-sizing: border-box; position: relative">
+    <div class="glow" style="position: absolute; right: -200px; top: -240px; width: 640px; height: 640px; border-radius: 50%; background: #F59E0B; opacity: 0.07"></div>
+    <div class="wrap" style="max-width: 1120px; margin: 0 auto; box-sizing: border-box; padding: 72px 24px 88px; display: flex; flex-wrap: wrap; align-items: center; gap: 48px; position: relative">
+      <div style="flex: 1 1 min(480px,100%); min-width: 0; display: flex; flex-direction: column; gap: 24px">
+        <div class="hi hi1" style="align-self: flex-start; border: 1px solid #F59E0B; color: #F59E0B; border-radius: 999px; padding: 8px 16px; font-size: 14px; font-weight: 700; letter-spacing: 0.04em">WIDOCZNOŚĆ I SPÓJNOŚĆ ONLINE</div>
+        <h1 class="hi hi2 h1" style="margin: 0; font-size: 56px; line-height: 1.06; font-weight: 800; letter-spacing: -0.025em; text-wrap: balance">Żadne zapytanie nie ginie. <span class="gold-t">Firma wygląda tak samo wszędzie.</span></h1>
+        <p class="hi hi3" style="margin: 0; font-size: 20px; line-height: 1.5; font-weight: 500; color: #B8B8B8; max-width: 560px">Strona z formularzem, kalendarz rezerwacji i uporządkowana wizytówka Google. Gotowe w 7 dni, dla instalatorów, elektryków, hydraulików i ekip remontowych.</p>
+        <div class="hi hi4" style="display: flex; flex-wrap: wrap; gap: 14px; align-items: center">
+          <a class="btn" href="#formularz" style="display: inline-block; background: #F59E0B; color: #0A0A0A; text-decoration: none; font-weight: 800; font-size: 17px; padding: 16px 28px; border-radius: 14px">Umów bezpłatną rozmowę</a>
+          <a class="ghost" href="#oferta" style="display: inline-block; color: #FFFFFF; text-decoration: none; font-weight: 700; font-size: 17px; padding: 16px 24px; border-radius: 14px; border: 1px solid #262626">Zobacz, co dostajesz</a>
+        </div>
+        <p class="hi hi5" style="margin: 0; font-size: 15px; color: #9A9A9A">Bez zobowiązań. Szukamy pierwszych firm do wdrożenia.</p>
+      </div>
+      <div style="flex: 1 1 min(340px,100%); min-width: 0; display: flex; flex-direction: column; gap: 16px">
+        <div style="font-size: 13px; font-weight: 700; color: #9A9A9A; letter-spacing: 0.06em">PRZYKŁAD: JEDNO MIEJSCE NA ZAPYTANIA</div>
+        <div class="hr hr1 card" style="background: #121212; border: 1px solid #262626; border-radius: 16px; padding: 20px 22px; display: flex; align-items: center; gap: 16px">
+          <div style="width: 44px; height: 44px; border-radius: 12px; background: #1A1A1A; display: flex; align-items: center; justify-content: center; flex-shrink: 0">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 4px; flex-grow: 1; min-width: 0">
+            <span style="font-size: 18px; font-weight: 700">Nowe zapytanie</span>
+            <span style="font-size: 14px; color: #9A9A9A">Ze strony firmy, dziś 09:12</span>
+          </div>
+          <span style="white-space: nowrap; flex-shrink: 0; background: #1A1A1A; border: 1px solid #262626; color: #FFFFFF; font-size: 13px; font-weight: 800; border-radius: 999px; padding: 6px 14px">Nowe</span>
+        </div>
+        <div class="hr hr2 card off" style="background: #121212; border: 1px solid #262626; border-radius: 16px; padding: 20px 22px; display: flex; align-items: center; gap: 16px; margin-left: 28px" data-off="">
+          <div style="width: 44px; height: 44px; border-radius: 12px; background: #1A1A1A; display: flex; align-items: center; justify-content: center; flex-shrink: 0">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 10h18M8 3v4M16 3v4"></path></svg>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 4px; flex-grow: 1; min-width: 0">
+            <span style="font-size: 18px; font-weight: 700">Rozmowa umówiona</span>
+            <span style="font-size: 14px; color: #9A9A9A">Termin wybrany od razu po formularzu</span>
+          </div>
+          <span class="live" style="background: #F59E0B; color: #0A0A0A; font-size: 13px; font-weight: 800; border-radius: 999px; padding: 6px 14px; white-space: nowrap; flex-shrink: 0; text-align: center; line-height: 1.3">W kontakcie</span>
+        </div>
+        <div class="hr hr3 card" style="background: #121212; border: 1px solid #262626; border-radius: 16px; padding: 20px 22px; display: flex; align-items: center; gap: 16px">
+          <div style="width: 44px; height: 44px; border-radius: 12px; background: #1A1A1A; display: flex; align-items: center; justify-content: center; flex-shrink: 0">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 4px; flex-grow: 1; min-width: 0">
+            <span style="font-size: 18px; font-weight: 700">Prośba o opinię</span>
+            <span style="font-size: 14px; color: #9A9A9A">Po wykonanej usłudze</span>
+          </div>
+          <span style="white-space: nowrap; flex-shrink: 0; border: 1px solid #F59E0B; color: #F59E0B; font-size: 13px; font-weight: 800; border-radius: 999px; padding: 5px 14px">Zakończone</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROBLEM -->
+  <div style="width: 100%; box-sizing: border-box; background: #0F0F0F; border-top: 1px solid #262626; border-bottom: 1px solid #262626">
+    <div class="wrap" style="max-width: 1120px; margin: 0 auto; box-sizing: border-box; padding: 72px 24px; display: flex; flex-direction: column; gap: 36px">
+      <div style="display: flex; flex-direction: column; gap: 12px; max-width: 720px">
+        <h2 class="rv h2" style="margin: 0; font-size: 38px; line-height: 1.12; font-weight: 800; letter-spacing: -0.02em; text-wrap: balance">Gdzie giną Twoje zapytania</h2>
+        <p style="margin: 0; font-size: 18px; line-height: 1.5; color: #B8B8B8">Dobra firma traci klientów nie przez jakość pracy, tylko przez bałagan wokół niej.</p>
+      </div>
+      <div style="display: flex; flex-wrap: wrap; gap: 20px">
+        <div class="card rv" style="flex: 1 1 300px; min-width: 0; background: #121212; border: 1px solid #262626; border-radius: 16px; padding: 28px; display: flex; flex-direction: column; gap: 10px">
+          <h3 style="margin: 0; font-size: 20px; font-weight: 800">Inne dane w każdym miejscu</h3>
+          <p style="margin: 0; font-size: 16px; line-height: 1.55; color: #B8B8B8">Inny telefon w wizytówce, inne godziny na stronie, stara nazwa w katalogu. Klient się gubi i dzwoni do kogoś innego.</p>
+        </div>
+        <div class="card rv" style="flex: 1 1 300px; min-width: 0; background: #121212; border: 1px solid #262626; border-radius: 16px; padding: 28px; display: flex; flex-direction: column; gap: 10px">
+          <h3 style="margin: 0; font-size: 20px; font-weight: 800">Zapytania w pięciu miejscach</h3>
+          <p style="margin: 0; font-size: 16px; line-height: 1.55; color: #B8B8B8">Telefon, Messenger, e-mail, SMS, kartka w busie. Gdy ekipa jest u klienta, nikt nie odpisuje, a zgłoszenie stygnie.</p>
+        </div>
+        <div class="card rv" style="flex: 1 1 300px; min-width: 0; background: #121212; border: 1px solid #262626; border-radius: 16px; padding: 28px; display: flex; flex-direction: column; gap: 10px">
+          <h3 style="margin: 0; font-size: 20px; font-weight: 800">Zadowolony klient milczy</h3>
+          <p style="margin: 0; font-size: 16px; line-height: 1.55; color: #B8B8B8">Nikt nie prosi o opinię w dobrym momencie, więc w Google widać mało recenzji, a nowy klient wybiera firmę, która ich ma więcej.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- OFERTA -->
+  <div id="oferta" style="width: 100%; box-sizing: border-box">
+    <div class="wrap" style="max-width: 1120px; margin: 0 auto; box-sizing: border-box; padding: 80px 24px; display: flex; flex-direction: column; gap: 36px">
+      <div style="display: flex; flex-direction: column; gap: 12px; max-width: 720px">
+        <h2 class="rv h2" style="margin: 0; font-size: 38px; line-height: 1.12; font-weight: 800; letter-spacing: -0.02em; text-wrap: balance">Co dostajesz</h2>
+        <p style="margin: 0; font-size: 18px; line-height: 1.5; color: #B8B8B8">Jedno wdrożenie, które porządkuje wszystko, co klient widzi, zanim do Ciebie zadzwoni.</p>
+      </div>
+      <div style="display: flex; flex-wrap: wrap; gap: 20px">
+        <div class="card rv" style="flex: 1 1 320px; min-width: 0; background: #121212; border: 1px solid #262626; border-radius: 16px; padding: 28px; display: flex; flex-direction: column; gap: 14px">
+          <div style="width: 48px; height: 48px; border-radius: 12px; background: #1A1A1A; display: flex; align-items: center; justify-content: center">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"></path><path d="M14 3v5h5M9 13h6M9 17h6"></path></svg>
+          </div>
+          <h3 style="margin: 0; font-size: 20px; font-weight: 800">Strona z formularzem</h3>
+          <p style="margin: 0; font-size: 16px; line-height: 1.55; color: #B8B8B8">Jedna czytelna strona z ofertą firmy i formularzem zapytania. Zgłoszenie trafia od razu do bazy, nie do skrzynki, w której ginie.</p>
+        </div>
+        <div class="card rv" style="flex: 1 1 320px; min-width: 0; background: #121212; border: 1px solid #262626; border-radius: 16px; padding: 28px; display: flex; flex-direction: column; gap: 14px">
+          <div style="width: 48px; height: 48px; border-radius: 12px; background: #1A1A1A; display: flex; align-items: center; justify-content: center">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M3 10h18M8 3v4M16 3v4"></path></svg>
+          </div>
+          <h3 style="margin: 0; font-size: 20px; font-weight: 800">Kalendarz rezerwacji</h3>
+          <p style="margin: 0; font-size: 16px; line-height: 1.55; color: #B8B8B8">Po wysłaniu formularza klient sam wybiera termin rozmowy lub wizyty. Mniej telefonów w tę i z powrotem.</p>
+        </div>
+        <div class="card rv" style="flex: 1 1 320px; min-width: 0; background: #121212; border: 1px solid #262626; border-radius: 16px; padding: 28px; display: flex; flex-direction: column; gap: 14px">
+          <div style="width: 48px; height: 48px; border-radius: 12px; background: #1A1A1A; display: flex; align-items: center; justify-content: center">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 12h-6l-2 3h-4l-2-3H2"></path><path d="M5.5 5.1 2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.5-6.9A2 2 0 0 0 16.8 4H7.2a2 2 0 0 0-1.7 1.1z"></path></svg>
+          </div>
+          <h3 style="margin: 0; font-size: 20px; font-weight: 800">Jedna baza zapytań</h3>
+          <p style="margin: 0; font-size: 16px; line-height: 1.55; color: #B8B8B8">Każde zapytanie ma imię, telefon, branżę i status. Widzisz, kto czeka na odpowiedź i które zgłoszenie wygrałeś.</p>
+        </div>
+        <div class="card rv" style="flex: 1 1 320px; min-width: 0; background: #121212; border: 1px solid #262626; border-radius: 16px; padding: 28px; display: flex; flex-direction: column; gap: 14px">
+          <div style="width: 48px; height: 48px; border-radius: 12px; background: #1A1A1A; display: flex; align-items: center; justify-content: center">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 0 1 16 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+          </div>
+          <h3 style="margin: 0; font-size: 20px; font-weight: 800">Wizytówka Google</h3>
+          <p style="margin: 0; font-size: 16px; line-height: 1.55; color: #B8B8B8">Uzupełniamy kategorie, godziny, usługi, zdjęcia i opis oraz podpinamy link do strony. Klient z mapy trafia tam, gdzie powinien.</p>
+        </div>
+        <div class="card rv" style="flex: 1 1 320px; min-width: 0; background: #121212; border: 1px solid #262626; border-radius: 16px; padding: 28px; display: flex; flex-direction: column; gap: 14px">
+          <div style="width: 48px; height: 48px; border-radius: 12px; background: #1A1A1A; display: flex; align-items: center; justify-content: center">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"></circle><path d="M9 12l2 2 4-4"></path></svg>
+          </div>
+          <h3 style="margin: 0; font-size: 20px; font-weight: 800">Spójne dane wszędzie</h3>
+          <p style="margin: 0; font-size: 16px; line-height: 1.55; color: #B8B8B8">Ta sama nazwa, adres, telefon i strona na stronie firmy, w wizytówce, w mediach społecznościowych i w katalogach.</p>
+        </div>
+        <div class="card rv" style="flex: 1 1 320px; min-width: 0; background: #121212; border: 1px solid #262626; border-radius: 16px; padding: 28px; display: flex; flex-direction: column; gap: 14px">
+          <div style="width: 48px; height: 48px; border-radius: 12px; background: #1A1A1A; display: flex; align-items: center; justify-content: center">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+          </div>
+          <h3 style="margin: 0; font-size: 20px; font-weight: 800">Opinie i raport miesięczny</h3>
+          <p style="margin: 0; font-size: 16px; line-height: 1.55; color: #B8B8B8">Gotowy link do opinii i prośba po wykonanej usłudze. Raz w miesiącu krótkie podsumowanie: ile zapytań, ile wygranych.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JAK TO DZIAŁA -->
+  <div style="width: 100%; box-sizing: border-box; background: #0F0F0F; border-top: 1px solid #262626; border-bottom: 1px solid #262626">
+    <div class="wrap" style="max-width: 1120px; margin: 0 auto; box-sizing: border-box; padding: 72px 24px; display: flex; flex-direction: column; gap: 36px">
+      <h2 class="rv h2" style="margin: 0; font-size: 38px; line-height: 1.12; font-weight: 800; letter-spacing: -0.02em; max-width: 720px; text-wrap: balance">Jak to wygląda w praktyce</h2>
+      <div style="display: flex; flex-wrap: wrap; gap: 20px">
+        <div class="rv" style="flex: 1 1 240px; min-width: 0; display: flex; flex-direction: column; gap: 12px; border-top: 3px solid #F59E0B; padding-top: 18px">
+          <span style="font-size: 14px; font-weight: 800; color: #F59E0B; letter-spacing: 0.06em">DZIEŃ 1</span>
+          <h3 style="margin: 0; font-size: 20px; font-weight: 800">Rozmowa i dane</h3>
+          <p style="margin: 0; font-size: 16px; line-height: 1.55; color: #B8B8B8">20 minut o Twojej firmie. Zbieramy usługi, obszar działania, logo i zdjęcia realizacji.</p>
+        </div>
+        <div class="rv" style="flex: 1 1 240px; min-width: 0; display: flex; flex-direction: column; gap: 12px; border-top: 3px solid #F59E0B; padding-top: 18px">
+          <span style="font-size: 14px; font-weight: 800; color: #F59E0B; letter-spacing: 0.06em">DNI 2 I 3</span>
+          <h3 style="margin: 0; font-size: 20px; font-weight: 800">Strona i kalendarz</h3>
+          <p style="margin: 0; font-size: 16px; line-height: 1.55; color: #B8B8B8">Budujemy stronę z formularzem, podpinamy kalendarz i powiadomienie e-mail o każdym zapytaniu.</p>
+        </div>
+        <div class="rv" style="flex: 1 1 240px; min-width: 0; display: flex; flex-direction: column; gap: 12px; border-top: 3px solid #F59E0B; padding-top: 18px">
+          <span style="font-size: 14px; font-weight: 800; color: #F59E0B; letter-spacing: 0.06em">DNI 4 I 5</span>
+          <h3 style="margin: 0; font-size: 20px; font-weight: 800">Wizytówka i spójność</h3>
+          <p style="margin: 0; font-size: 16px; line-height: 1.55; color: #B8B8B8">Porządkujemy wizytówkę Google i wyrównujemy dane w mediach społecznościowych oraz katalogach.</p>
+        </div>
+        <div class="rv" style="flex: 1 1 240px; min-width: 0; display: flex; flex-direction: column; gap: 12px; border-top: 3px solid #F59E0B; padding-top: 18px">
+          <span style="font-size: 14px; font-weight: 800; color: #F59E0B; letter-spacing: 0.06em">DNI 6 I 7</span>
+          <h3 style="margin: 0; font-size: 20px; font-weight: 800">Test i przekazanie</h3>
+          <p style="margin: 0; font-size: 16px; line-height: 1.55; color: #B8B8B8">Sprawdzamy całą drogę zapytania od formularza do rezerwacji, potem krótko pokazujemy Ci, jak z tego korzystać.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CO DALEJ -->
+  <div style="width: 100%; box-sizing: border-box; background: #0F0F0F; border-top: 1px solid #262626; border-bottom: 1px solid #262626">
+    <div class="wrap" style="max-width: 1120px; margin: 0 auto; box-sizing: border-box; padding: 64px 24px; display: flex; flex-wrap: wrap; align-items: center; gap: 32px">
+      <div style="flex: 1 1 min(480px,100%); min-width: 0; display: flex; flex-direction: column; gap: 12px">
+        <h2 class="rv h2" style="margin: 0; font-size: 32px; line-height: 1.15; font-weight: 800; letter-spacing: -0.02em; text-wrap: balance">To pierwszy krok do porządku w całej firmie</h2>
+        <p style="margin: 0; font-size: 17px; line-height: 1.55; color: #B8B8B8">Pełny system BizBox, czyli zlecenia, kalendarz ekipy, karty klientów, panel technika i automatyczne SMS-y, jest w przygotowaniu. Firmy, które zaczną od uporządkowania widoczności, wejdą do niego jako pierwsze, z zapytaniami i danymi już na miejscu.</p>
+      </div>
+      <a class="ghost" href="#formularz" style="flex: 0 0 auto; display: inline-block; border: 1px solid #F59E0B; color: #F59E0B; text-decoration: none; font-weight: 800; font-size: 16px; padding: 14px 24px; border-radius: 12px">Chcę być wśród pierwszych</a>
+    </div>
+  </div>
+
+  <!-- FORMULARZ -->
+  <div id="formularz" style="width: 100%; box-sizing: border-box">
+    <div class="wrap" style="max-width: 1120px; margin: 0 auto; box-sizing: border-box; padding: 80px 24px; display: flex; flex-wrap: wrap; gap: 48px; align-items: flex-start">
+      <div style="flex: 1 1 380px; min-width: 0; display: flex; flex-direction: column; gap: 20px">
+        <div style="color: #F59E0B; font-size: 14px; font-weight: 800; letter-spacing: 0.06em">BEZPŁATNA ROZMOWA</div>
+        <h2 class="rv h2" style="margin: 0; font-size: 40px; line-height: 1.1; font-weight: 800; letter-spacing: -0.02em; text-wrap: balance">Sprawdź, co u Ciebie ginie</h2>
+        <p style="margin: 0; font-size: 18px; line-height: 1.55; color: #B8B8B8">20 minut rozmowy o tym, skąd przychodzą Twoje zapytania i gdzie je tracisz. Dostaniesz konkretny plan, nawet jeśli nie zdecydujesz się na współpracę.</p>
+        <p style="margin: 0; font-size: 15px; line-height: 1.55; color: #9A9A9A">Po wysłaniu formularza od razu wybierzesz termin rozmowy w kalendarzu.</p>
+      </div>
+      <div class="rv fcard" style="flex: 1 1 min(400px,100%); min-width: 0; background: #121212; border: 1px solid #262626; border-radius: 20px; padding: 32px; display: flex; flex-direction: column; gap: 18px">
+        <div style="display: flex; flex-direction: column; gap: 8px">
+          <label for="f-imie" style="font-size: 15px; font-weight: 700; color: #FFFFFF">Imię i nazwisko</label>
+          <input id="f-imie" type="text" autocomplete="name" style="box-sizing: border-box; width: 100%; background: #1A1A1A; border: 1px solid #262626; border-radius: 12px; padding: 14px 16px; font-size: 16px; color: #FFFFFF">
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 8px">
+          <label for="f-tel" style="font-size: 15px; font-weight: 700; color: #FFFFFF">Numer telefonu *</label>
+          <input id="f-tel" type="tel" autocomplete="tel" style="box-sizing: border-box; width: 100%; background: #1A1A1A; border: 1px solid #262626; border-radius: 12px; padding: 14px 16px; font-size: 16px; color: #FFFFFF">
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 8px">
+          <label for="f-branza" style="font-size: 15px; font-weight: 700; color: #FFFFFF">Branża</label>
+          <select id="f-branza" style="box-sizing: border-box; width: 100%; background: #1A1A1A; border: 1px solid #262626; border-radius: 12px; padding: 14px 16px; font-size: 16px; color: #FFFFFF">
+            <option>Wybierz branżę</option>
+            <option>Instalacje sanitarne i grzewcze</option>
+            <option>Elektryka</option>
+            <option>Pompy ciepła, OZE, klimatyzacja</option>
+            <option>Serwis AGD</option>
+            <option>Ekipa remontowa</option>
+            <option>Inna</option>
+          </select>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 8px">
+          <label for="f-ekipa" style="font-size: 15px; font-weight: 700; color: #FFFFFF">Wielkość ekipy</label>
+          <select id="f-ekipa" style="box-sizing: border-box; width: 100%; background: #1A1A1A; border: 1px solid #262626; border-radius: 12px; padding: 14px 16px; font-size: 16px; color: #FFFFFF">
+            <option>Wybierz wielkość ekipy</option>
+            <option>Działam sam</option>
+            <option>2 do 3 osób</option>
+            <option>4 do 6 osób</option>
+            <option>7 do 10 osób</option>
+          </select>
+        </div>
+        <div style="display: flex; align-items: flex-start; gap: 12px">
+          <input id="f-zgoda" type="checkbox" style="width: 20px; height: 20px; margin: 2px 0 0; flex-shrink: 0; accent-color: #F59E0B">
+          <label for="f-zgoda" style="font-size: 14px; line-height: 1.5; color: #B8B8B8">Zgadzam się na kontakt w sprawie rozmowy. Dane przetwarzam zgodnie z <a href="#prywatnosc">polityką prywatności</a>.</label>
+        </div>
+        <button id="f-send" class="btn" type="button" style="box-sizing: border-box; width: 100%; background: #F59E0B; color: #0A0A0A; border: 0; border-radius: 14px; padding: 16px 24px; font-family: inherit; font-size: 17px; font-weight: 800; cursor: pointer">Zarezerwuj bezpłatną rozmowę (20 min)</button>
+        <input id="f-www" type="text" tabindex="-1" autocomplete="off" aria-hidden="true" style="position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0">
+        <div id="f-msg" role="status" aria-live="polite" style="display: none; font-size: 15px; line-height: 1.5; border-radius: 12px; padding: 14px 16px"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FAQ -->
+  <div style="width: 100%; box-sizing: border-box; background: #0F0F0F; border-top: 1px solid #262626">
+    <div class="wrap" style="max-width: 1120px; margin: 0 auto; box-sizing: border-box; padding: 72px 24px; display: flex; flex-direction: column; gap: 32px">
+      <h2 class="rv h2" style="margin: 0; font-size: 34px; line-height: 1.12; font-weight: 800; letter-spacing: -0.02em">Najczęstsze pytania</h2>
+      <div style="display: flex; flex-direction: column; gap: 14px; max-width: 820px; width: 100%">
+        <details class="faq rv" open><summary><span>Czy to jest cały system BizBox?</span><span class="pm" aria-hidden="true"></span></summary><div class="ans"><p>Nie. Widoczność online to część dla klientów, którzy chcą uporządkować wizerunek i zapytania. Pełny system do zleceń i ekip jest w przygotowaniu.</p></div></details>
+        <details class="faq rv"><summary><span>Czy gwarantujecie miejsce w Google?</span><span class="pm" aria-hidden="true"></span></summary><div class="ans"><p>Nie. Nikt uczciwy tego nie gwarantuje. Spójna wizytówka, strona i opinie zwiększają szansę, że klient wybierze właśnie Ciebie.</p></div></details>
+        <details class="faq rv"><summary><span>Czy muszę mieć już stronę lub wizytówkę?</span><span class="pm" aria-hidden="true"></span></summary><div class="ans"><p>Nie. Jeśli ich nie masz, założymy je. Jeśli masz, uporządkujemy to, co jest. Potrzebujemy tylko dostępu do wizytówki jako zarządca.</p></div></details>
+        <details class="faq rv"><summary><span>Co dzieje się z danymi moich klientów?</span><span class="pm" aria-hidden="true"></span></summary><div class="ans"><p>Zapytania widzisz tylko Ty. Formularz zbiera zgodę na kontakt, a dane przetwarzamy zgodnie z polityką prywatności.</p></div></details>
+      </div>
+    </div>
+  </div>
+
+  <!-- PRYWATNOŚĆ -->
+  <div id="prywatnosc" class="modal" role="dialog" aria-modal="true" aria-label="Polityka prywatności" style="display: none"><div class="mbox"><button type="button" class="mclose" aria-label="Zamknij">Zamknij</button>
+    <div class="wrap" style="max-width: 820px; margin: 0 auto; box-sizing: border-box; padding: 56px 24px; display: flex; flex-direction: column; gap: 12px">
+      <h2 class="h2" style="margin: 0; font-size: 28px; font-weight: 800">Polityka prywatności</h2>
+      <p style="margin: 0; font-size: 16px; line-height: 1.65; color: #B8B8B8">Ostatnia aktualizacja: [DATA]. Poniżej wyjaśniamy, jakie dane zbieramy przez formularz na tej stronie i co z nimi robimy.</p>
+      <h3 style="margin: 12px 0 0; font-size: 19px; font-weight: 800">1. Kto jest administratorem danych</h3>
+      <p style="margin: 0; font-size: 16px; line-height: 1.65; color: #B8B8B8">Administratorem Twoich danych jest [PEŁNA NAZWA FIRMY], [ADRES], NIP [NIP]. Kontakt w sprawach danych osobowych: [E-MAIL KONTAKTOWY].</p>
+      <h3 style="margin: 12px 0 0; font-size: 19px; font-weight: 800">2. Jakie dane zbieramy i po co</h3>
+      <ul style="margin: 0; font-size: 16px; line-height: 1.65; color: #B8B8B8; padding-left: 22px; display: flex; flex-direction: column; gap: 6px"><li><strong>Imię i nazwisko, numer telefonu, branża, wielkość ekipy</strong> (z formularza): aby umówić i przeprowadzić rozmowę oraz odpowiedzieć na zapytanie. Podstawa: Twoja zgoda oraz podjęcie działań na Twoje żądanie przed zawarciem umowy (art. 6 ust. 1 lit. a i b RODO).</li><li><strong>Dane terminu rozmowy</strong> (przy rezerwacji w kalendarzu): aby potwierdzić i obsłużyć spotkanie. Podstawa: art. 6 ust. 1 lit. b RODO.</li><li><strong>Dane niezbędne do obrony lub dochodzenia roszczeń</strong>: nasz prawnie uzasadniony interes (art. 6 ust. 1 lit. f RODO).</li></ul>
+      <p style="margin: 0; font-size: 16px; line-height: 1.65; color: #B8B8B8">Podanie numeru telefonu jest dobrowolne, ale bez niego nie możemy się z Tobą skontaktować. Pozostałe pola formularza są opcjonalne.</p>
+      <h3 style="margin: 12px 0 0; font-size: 19px; font-weight: 800">3. Komu przekazujemy dane</h3>
+      <p style="margin: 0; font-size: 16px; line-height: 1.65; color: #B8B8B8">Korzystamy z dostawców, którzy przetwarzają dane na nasze zlecenie: hostingu strony, bazy danych z zapytaniami, kalendarza rezerwacji, narzędzi do automatyzacji powiadomień oraz poczty e-mail. Lista konkretnych podmiotów: [UZUPEŁNIĆ]. Danych nie sprzedajemy.</p>
+      <h3 style="margin: 12px 0 0; font-size: 19px; font-weight: 800">4. Jak długo przechowujemy dane</h3>
+      <p style="margin: 0; font-size: 16px; line-height: 1.65; color: #B8B8B8">Dane z zapytania przechowujemy do czasu zakończenia kontaktu, a jeśli nie dojdzie do współpracy, nie dłużej niż [OKRES, np. 12 miesięcy]. Dane związane z umową przechowujemy tak długo, jak wymagają tego przepisy. Zgodę możesz wycofać w każdej chwili, co nie wpływa na zgodność z prawem przetwarzania sprzed jej wycofania.</p>
+      <h3 style="margin: 12px 0 0; font-size: 19px; font-weight: 800">5. Twoje prawa</h3>
+      <p style="margin: 0; font-size: 16px; line-height: 1.65; color: #B8B8B8">Masz prawo dostępu do danych, ich sprostowania, usunięcia, ograniczenia przetwarzania, przenoszenia oraz sprzeciwu. Aby z nich skorzystać, napisz na [E-MAIL KONTAKTOWY]. Masz też prawo wnieść skargę do Prezesa Urzędu Ochrony Danych Osobowych (ul. Stawki 2, 00-193 Warszawa).</p>
+    </div>
+  </div></div>
+
+  <!-- COOKIES -->
+  <div id="cookies" class="modal" role="dialog" aria-modal="true" aria-label="Polityka plików cookies" style="display: none"><div class="mbox"><button type="button" class="mclose" aria-label="Zamknij">Zamknij</button>
+    <div class="wrap" style="max-width: 820px; margin: 0 auto; box-sizing: border-box; padding: 56px 24px; display: flex; flex-direction: column; gap: 12px">
+      <h2 class="h2" style="margin: 0; font-size: 28px; font-weight: 800">Polityka plików cookies</h2>
+      <p style="margin: 0; font-size: 16px; line-height: 1.65; color: #B8B8B8">Pliki cookies to małe pliki zapisywane w Twojej przeglądarce. Ta strona jest prosta i używa ich w minimalnym zakresie.</p>
+      <h3 style="margin: 12px 0 0; font-size: 19px; font-weight: 800">Czego używamy</h3>
+      <ul style="margin: 0; font-size: 16px; line-height: 1.65; color: #B8B8B8; padding-left: 22px; display: flex; flex-direction: column; gap: 6px"><li><strong>Zapamiętanie Twojego wyboru w sprawie cookies</strong> (informacja, że zamknąłeś komunikat). To dane niezbędne, nie wymagają zgody.</li><li><strong>Czcionki Google Fonts.</strong> Przeglądarka pobiera czcionkę z serwerów Google, które przy tym mogą otrzymać Twój adres IP.</li><li><strong>Kalendarz rezerwacji Cal.com.</strong> Gdy wybierzesz termin, otwiera się strona zewnętrznego dostawcy, który stosuje własne pliki cookies zgodnie z własną polityką.</li></ul>
+      <p style="margin: 0; font-size: 16px; line-height: 1.65; color: #B8B8B8">Nie używamy plików cookies analitycznych ani reklamowych. Jeśli to się zmieni, poprosimy Cię o zgodę, zanim cokolwiek zapiszemy.</p>
+      <h3 style="margin: 12px 0 0; font-size: 19px; font-weight: 800">Jak zarządzać cookies</h3>
+      <p style="margin: 0; font-size: 16px; line-height: 1.65; color: #B8B8B8">Pliki cookies możesz usunąć lub zablokować w ustawieniach swojej przeglądarki. Zablokowanie niezbędnych plików może sprawić, że komunikat o cookies będzie pojawiał się przy każdej wizycie.</p>
+    </div>
+  </div></div>
+
+  <!-- STOPKA -->
+  <div style="width: 100%; box-sizing: border-box; border-top: 1px solid #262626">
+    <div class="wrap" style="max-width: 1120px; margin: 0 auto; box-sizing: border-box; padding: 32px 24px 40px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 16px">
+      <div style="font-size: 20px; font-weight: 800">Biz<span style="color: #F59E0B">Box</span></div>
+      <div style="font-size: 14px; color: #9A9A9A">[E-MAIL KONTAKTOWY] · [TELEFON] · <a href="#prywatnosc">Polityka prywatności</a> · <a href="#cookies">Cookies</a></div>
+    </div>
+  </div>
+
+</div>
+
+<div id="ck" style="display: none; position: fixed; left: 16px; right: 16px; bottom: 16px; z-index: 50; max-width: 720px; margin: 0 auto; box-sizing: border-box; background: #121212; border: 1px solid #262626; border-radius: 16px; padding: 18px 20px; box-shadow: 0 12px 40px rgba(0,0,0,.6); flex-wrap: wrap; align-items: center; gap: 14px; font-family: 'Manrope', system-ui, sans-serif; color: #FFFFFF">
+  <p style="margin: 0; flex: 1 1 300px; font-size: 14px; line-height: 1.55; color: #B8B8B8">Ta strona używa tylko niezbędnych plików cookies i nie śledzi Cię reklamowo. Szczegóły w <a href="#cookies">polityce cookies</a>.</p>
+  <button id="ck-ok" type="button" style="background: #F59E0B; color: #0A0A0A; border: 0; border-radius: 12px; padding: 12px 22px; font-family: inherit; font-size: 15px; font-weight: 800; cursor: pointer">Rozumiem</button>
+</div>
+<script>
+(function(){
+var ck=document.getElementById('ck');try{if(!localStorage.getItem('bb_ck')&&ck)ck.style.display='flex';}catch(x){if(ck)ck.style.display='flex';}
+document.addEventListener('click',function(e){if(e.target.closest&&e.target.closest('#ck-ok')){try{localStorage.setItem('bb_ck','1');}catch(x){}ck.style.display='none';}});
+function cl(){var o=document.querySelector('.modal.open');if(o){o.classList.remove('open');document.body.style.overflow='';}}
+document.addEventListener('click',function(e){var t=e.target;if(!t.closest)return;
+var a=t.closest('a[href="#prywatnosc"],a[href="#cookies"]');
+if(a){e.preventDefault();cl();var m=document.getElementById(a.getAttribute('href').slice(1));if(m){m.classList.add('open');document.body.style.overflow='hidden';m.querySelector('.mbox').scrollTop=0;}return;}
+if(t.closest('.mclose')||t.classList.contains('modal'))cl();
+var s=t.closest('a[href="#formularz"],a[href="#oferta"]');
+if(s){var id=s.getAttribute('href').slice(1),el=document.getElementById(id);if(el){e.preventDefault();el.scrollIntoView({behavior:'smooth',block:'start'});try{history.replaceState(null,'','#'+id);}catch(x){}
+if(id==='formularz'){var f=document.getElementById('f-imie');if(f)setTimeout(function(){f.focus({preventScroll:true});},600);}}}});
+document.addEventListener('keydown',function(e){if(e.key==='Escape')cl();});
+var CONFIG={calUrl:'',endpoint:'/api/lead'}; // calUrl: link do Cal.com, endpoint: adres odbierający zapytania
+function msg(t,ok){var m=document.getElementById('f-msg');if(!m)return;m.style.display='block';m.textContent=t;m.style.background=ok?'#1A1A1A':'#2A1410';m.style.border='1px solid '+(ok?'#F59E0B':'#7F2A1D');m.style.color=ok?'#FFFFFF':'#FCA5A5';}
+document.addEventListener('click',function(e){
+var b=e.target.closest&&e.target.closest('#f-send');if(!b)return;
+var v=function(id){var el=document.getElementById(id);return el?el.value.trim():'';};
+var tel=v('f-tel'),zg=document.getElementById('f-zgoda');
+if(tel.replace(/\D/g,'').length<9){msg('Podaj poprawny numer telefonu.',false);document.getElementById('f-tel').focus();return;}
+if(!zg||!zg.checked){msg('Zaznacz zgodę na kontakt, żeby wysłać formularz.',false);return;}
+var data={www:v('f-www'),imie:v('f-imie'),telefon:tel,branza:v('f-branza'),ekipa:v('f-ekipa'),zgoda:true};
+b.disabled=true;b.style.opacity='.6';
+var done=function(){
+ msg('Dziękujemy! Zapytanie zapisane. Odezwiemy się, żeby potwierdzić termin rozmowy.',true);
+ if(CONFIG.calUrl){var u=CONFIG.calUrl+(CONFIG.calUrl.indexOf('?')>-1?'&':'?')+'name='+encodeURIComponent(data.imie);window.open(u,'_blank','noopener');}
+ b.disabled=false;b.style.opacity='';
+};
+if(CONFIG.endpoint){fetch(CONFIG.endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)}).then(function(r){if(!r.ok)throw 0;done();}).catch(function(){msg('Nie udało się wysłać. Spróbuj ponownie lub zadzwoń.',false);b.disabled=false;b.style.opacity='';});}
+else{done();}
+});
+})();
+</script>
+</body>
+</html>
