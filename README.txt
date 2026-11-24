@@ -11,6 +11,5 @@ Wdrozenie na Vercel:
   3. Redeploy.
   4. W Make dodaj filtr: secret = LEAD_WEBHOOK_SECRET.
 
-Do uzupelnienia w index.html: dane w stopce ([E-MAIL KONTAKTOWY], [TELEFON]),
-dane administratora w polityce prywatnosci (nazwa, adres, NIP, data, dostawcy, okres),
-oraz calUrl (link do Cal.com) w skrypcie na dole pliku.
+Dane w polityce prywatnosci: osoba prywatna (marka BizBox). Po rejestracji w CEIDG
+podmien administratora na nazwe firmy, adres i NIP.
