@@ -400,6 +400,7 @@ html,body{overflow-x:hidden}
         <button id="f-send" class="btn" type="button" style="box-sizing: border-box; width: 100%; background: #F59E0B; color: #0A0A0A; border: 0; border-radius: 14px; padding: 16px 24px; font-family: inherit; font-size: 17px; font-weight: 800; cursor: pointer">Zarezerwuj bezpłatną rozmowę (20 min)</button>
         <input id="f-www" type="text" tabindex="-1" autocomplete="off" aria-hidden="true" style="position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0">
         <div id="f-msg" role="status" aria-live="polite" style="display: none; font-size: 15px; line-height: 1.5; border-radius: 12px; padding: 14px 16px"></div>
+        <button id="f-cal" class="btn" type="button" style="display: none; box-sizing: border-box; width: 100%; background: #F59E0B; color: #0A0A0A; border: 0; border-radius: 14px; padding: 16px 24px; font-family: inherit; font-size: 17px; font-weight: 800; cursor: pointer">Wybierz termin rozmowy</button>
       </div>
     </div>
   </div>
@@ -476,7 +477,26 @@ var s=t.closest('a[href="#formularz"],a[href="#oferta"]');
 if(s){var id=s.getAttribute('href').slice(1),el=document.getElementById(id);if(el){e.preventDefault();el.scrollIntoView({behavior:'smooth',block:'start'});try{history.replaceState(null,'','#'+id);}catch(x){}
 if(id==='formularz'){var f=document.getElementById('f-imie');if(f)setTimeout(function(){f.focus({preventScroll:true});},600);}}}});
 document.addEventListener('keydown',function(e){if(e.key==='Escape')cl();});
-var CONFIG={calUrl:'',endpoint:'/api/lead'}; // calUrl: link do Cal.com, endpoint: adres odbierający zapytania
+// calLink: link do wydarzenia Cal.com, np. 'twoja-nazwa/rozmowa-20-min' (pełny adres https://cal.com/... też zadziała)
+// endpoint: adres odbierający zapytania
+var CONFIG={calLink:'dawid-kowalski-6ctegv/bezpłatna-rozmowa',endpoint:'/api/lead'};
+var CAL_NS='rozmowa',calPrefill={};
+var calPath=function(){return String(CONFIG.calLink||'').trim().replace(/^https?:\/\/(app\.)?cal\.com\//,'').replace(/^\/+|\/+$/g,'');};
+var calApi=function(){
+ if(!calPath())return null;
+ if(!window.Cal){(function(C,A,L){var p=function(a,ar){a.q.push(ar);};var d=C.document;C.Cal=C.Cal||function(){var cal=C.Cal,ar=arguments;if(!cal.loaded){cal.ns={};cal.q=cal.q||[];d.head.appendChild(d.createElement('script')).src=A;cal.loaded=true;}if(ar[0]===L){var api=function(){p(api,arguments);};var ns=ar[1];api.q=api.q||[];if(typeof ns==='string'){cal.ns[ns]=cal.ns[ns]||api;p(cal.ns[ns],ar);p(cal,['initNamespace',ns]);}else p(cal,ar);return;}p(cal,ar);};})(window,'https://app.cal.com/embed/embed.js','init');}
+ if(!window.Cal.ns||!window.Cal.ns[CAL_NS]){
+  window.Cal('init',CAL_NS,{origin:'https://cal.com'});
+  var ns=window.Cal.ns[CAL_NS];
+  ns('ui',{theme:'dark',layout:'month_view',hideEventTypeDetails:false,cssVarsPerTheme:{light:{'cal-brand':'#F59E0B'},dark:{'cal-brand':'#F59E0B','cal-brand-text':'#000000','cal-bg':'#121212','cal-bg-muted':'#0A0A0A','cal-border':'#262626'}}});
+  ns('on',{action:'bookingSuccessfulV2',callback:function(){msg('Termin zarezerwowany! Potwierdzenie wysłaliśmy na Twój e-mail. Do usłyszenia na rozmowie.',true);var c=document.getElementById('f-cal');if(c)c.style.display='none';}});
+ }
+ return window.Cal.ns[CAL_NS];
+};
+var openCal=function(){var ns=calApi();if(!ns)return;var cfg={layout:'month_view',theme:'dark'};for(var k in calPrefill)if(calPrefill[k])cfg[k]=calPrefill[k];ns('modal',{calLink:calPath(),config:cfg});};
+// wczytaj kalendarz dopiero, gdy ktoś zacznie wypełniać formularz
+document.addEventListener('focusin',function(e){if(e.target.closest&&e.target.closest('#formularz'))calApi();});
+document.addEventListener('click',function(e){if(e.target.closest&&e.target.closest('#f-cal'))openCal();});
 function msg(t,ok){var m=document.getElementById('f-msg');if(!m)return;m.style.display='block';m.textContent=t;m.style.background=ok?'#1A1A1A':'#2A1410';m.style.border='1px solid '+(ok?'#F59E0B':'#7F2A1D');m.style.color=ok?'#FFFFFF':'#FCA5A5';}
 document.addEventListener('click',function(e){
 var b=e.target.closest&&e.target.closest('#f-send');if(!b)return;
@@ -487,9 +507,12 @@ if(!zg||!zg.checked){msg('Zaznacz zgodę na kontakt, żeby wysłać formularz.',
 var data={www:v('f-www'),imie:v('f-imie'),telefon:tel,branza:v('f-branza'),ekipa:v('f-ekipa'),zgoda:true};
 b.disabled=true;b.style.opacity='.6';
 var done=function(){
- msg('Dziękujemy! Zapytanie zapisane. Odezwiemy się, żeby potwierdzić termin rozmowy.',true);
- if(CONFIG.calUrl){var u=CONFIG.calUrl+(CONFIG.calUrl.indexOf('?')>-1?'&':'?')+'name='+encodeURIComponent(data.imie);window.open(u,'_blank','noopener');}
  b.disabled=false;b.style.opacity='';
+ if(!calPath()){msg('Dziękujemy! Zapytanie zapisane. Odezwiemy się, żeby potwierdzić termin rozmowy.',true);return;}
+ calPrefill={name:data.imie,notes:['Telefon: '+data.telefon,data.branza&&!/^Wybierz/.test(data.branza)&&'Branża: '+data.branza,data.ekipa&&!/^Wybierz/.test(data.ekipa)&&'Ekipa: '+data.ekipa].filter(Boolean).join('. ')};
+ msg('Dziękujemy! Zapytanie zapisane. Wybierz dogodny termin rozmowy w kalendarzu albo poczekaj, aż oddzwonimy.',true);
+ var c=document.getElementById('f-cal');if(c)c.style.display='block';
+ openCal();
 };
 if(CONFIG.endpoint){fetch(CONFIG.endpoint,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)}).then(function(r){if(!r.ok)throw 0;done();}).catch(function(){msg('Nie udało się wysłać. Spróbuj ponownie lub zadzwoń.',false);b.disabled=false;b.style.opacity='';});}
 else{done();}
