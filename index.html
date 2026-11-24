@@ -62,6 +62,7 @@ html{scroll-behavior:smooth}
 @keyframes fade{from{opacity:0}to{opacity:1}}
 @keyframes pop{from{opacity:0;transform:translateY(20px) scale(.98)}to{opacity:1;transform:none}}
 
+.promo{position:relative;overflow:hidden;display:flex;flex-wrap:wrap;align-items:center;gap:32px;box-sizing:border-box;padding:40px;border:1px solid #F59E0B;border-radius:24px;background:linear-gradient(145deg,rgba(245,158,11,.14),#121212 55%);box-shadow:0 0 0 6px rgba(245,158,11,.06),0 20px 60px rgba(245,158,11,.12)}
 img,svg{max-width:100%}
 html,body{overflow-x:hidden}
 @media (max-width:900px){
@@ -81,6 +82,8 @@ html,body{overflow-x:hidden}
 .wrap > a,.btn,.ghost{box-sizing:border-box}
 .hi4 a{flex:1 1 100%;text-align:center}
 .card{padding:22px !important}
+.promo{padding:24px 20px;gap:24px}
+.promo .btn{flex:1 1 100% !important;text-align:center}
 }
 @media (max-width:400px){.h1{font-size:30px !important}}
 
@@ -147,6 +150,7 @@ html{scroll-behavior:smooth}
 @keyframes fade{from{opacity:0}to{opacity:1}}
 @keyframes pop{from{opacity:0;transform:translateY(20px) scale(.98)}to{opacity:1;transform:none}}
 
+.promo{position:relative;overflow:hidden;display:flex;flex-wrap:wrap;align-items:center;gap:32px;box-sizing:border-box;padding:40px;border:1px solid #F59E0B;border-radius:24px;background:linear-gradient(145deg,rgba(245,158,11,.14),#121212 55%);box-shadow:0 0 0 6px rgba(245,158,11,.06),0 20px 60px rgba(245,158,11,.12)}
 img,svg{max-width:100%}
 html,body{overflow-x:hidden}
 @media (max-width:900px){
@@ -166,6 +170,8 @@ html,body{overflow-x:hidden}
 .wrap > a,.btn,.ghost{box-sizing:border-box}
 .hi4 a{flex:1 1 100%;text-align:center}
 .card{padding:22px !important}
+.promo{padding:24px 20px;gap:24px}
+.promo .btn{flex:1 1 100% !important;text-align:center}
 }
 @media (max-width:400px){.h1{font-size:30px !important}}
 
@@ -344,9 +350,12 @@ html,body{overflow-x:hidden}
 
   <!-- CO DALEJ -->
   <div style="width: 100%; box-sizing: border-box; background: #0F0F0F; border-top: 1px solid #262626; border-bottom: 1px solid #262626">
-    <div class="wrap" style="max-width: 1120px; margin: 0 auto; box-sizing: border-box; padding: 64px 24px; display: flex; flex-wrap: wrap; align-items: center; gap: 32px">
-      <div style="flex: 1 1 min(480px,100%); min-width: 0; display: flex; flex-direction: column; gap: 12px">
-        <h2 class="rv h2" style="margin: 0; font-size: 32px; line-height: 1.15; font-weight: 800; letter-spacing: -0.02em; text-wrap: balance">To pierwszy krok do porządku w całej firmie</h2>
+    <div class="wrap" style="max-width: 1120px; margin: 0 auto; box-sizing: border-box; padding: 64px 24px">
+     <div class="promo rv">
+      <div class="glow" style="position: absolute; right: -160px; top: -200px; width: 420px; height: 420px; border-radius: 50%; background: #F59E0B; opacity: 0.08"></div>
+      <div style="flex: 1 1 min(480px,100%); min-width: 0; display: flex; flex-direction: column; gap: 12px; position: relative">
+        <div style="align-self: flex-start; display: flex; align-items: center; gap: 8px; background: rgba(245,158,11,.12); border: 1px solid rgba(245,158,11,.45); color: #F59E0B; border-radius: 999px; padding: 6px 14px 6px 8px; font-size: 13px; font-weight: 800; letter-spacing: 0.06em"><img src="logo.png" alt="" width="22" height="22" style="display: block; width: 22px; height: 22px">PEŁNY SYSTEM BIZBOX · WKRÓTCE</div>
+        <h2 class="h2" style="margin: 0; font-size: 32px; line-height: 1.15; font-weight: 800; letter-spacing: -0.02em; text-wrap: balance">To pierwszy krok do porządku w całej firmie</h2>
         <p style="margin: 0; font-size: 17px; line-height: 1.55; color: #B8B8B8">BizBox to jeden system dla firm usługowych, który prowadzi zlecenie od pierwszego zapytania do rozliczenia. Zamiast zeszytu, Excela i dziesiątek SMS-ów masz wszystko w jednym miejscu:</p>
         <ul style="margin: 4px 0 0; padding-left: 22px; font-size: 16px; line-height: 1.55; color: #B8B8B8; display: flex; flex-direction: column; gap: 6px">
           <li><strong style="color: #FFFFFF">Zapytania i wyceny:</strong> formularz pyta o zakres, termin i budżet, a gotową wycenę PDF przygotujesz w kilka minut.</li>
@@ -357,7 +366,8 @@ html,body{overflow-x:hidden}
         </ul>
         <p style="margin: 4px 0 0; font-size: 17px; line-height: 1.55; color: #B8B8B8">Pełny system jest w przygotowaniu. Firmy, które zaczną od uporządkowania widoczności, wejdą do niego jako pierwsze, z zapytaniami i danymi już na miejscu.</p>
       </div>
-      <a class="ghost" href="#formularz" style="flex: 0 0 auto; display: inline-block; border: 1px solid #F59E0B; color: #F59E0B; text-decoration: none; font-weight: 800; font-size: 16px; padding: 14px 24px; border-radius: 12px">Chcę być wśród pierwszych</a>
+      <a class="btn" href="#formularz" style="flex: 0 0 auto; position: relative; display: inline-block; background: #F59E0B; color: #0A0A0A; text-decoration: none; font-weight: 800; font-size: 16px; padding: 15px 26px; border-radius: 12px">Chcę być wśród pierwszych</a>
+     </div>
     </div>
   </div>
 
